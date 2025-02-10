@@ -1,0 +1,21 @@
+CustomerID,Age,Income,AccountCreated,Preference,EmailVerified
+1,56.0,92955.0,02-01-2022,Product A,False
+2,40.0,94925.0,09-01-2022,Product A,False
+3,46.0,97969.0,16-01-2022,Service C,False
+4,40.0,35311.0,23-01-2022,Product A,False
+5,40.0,83707.0,30-01-2022,Product A,False
+6,40.0,58693.0,06-02-2022,Product A,False
+7,38.0,55658.0,13-02-2022,Product B,False
+8,56.0,48431.0,20-02-2022,Product B,False
+9,36.0,32747.0,27-02-2022,Product A,False
+10,40.0,65773.0,06-03-2022,Product B,True
+11,28.0,65773.0,13-03-2022,Product A,True
+12,28.0,65773.0,20-03-2022,Product B,False
+13,41.0,65773.0,27-03-2022,Service C,False
+14,53.0,65773.0,03-04-2022,Service C,False
+15,57.0,96803.0,10-04-2022,Product A,False
+16,40.0,61551.0,17-04-2022,Service C,False
+17,20.0,65773.0,24-04-2022,Service C,False
+18,39.0,99092.0,01-05-2022,Product A,False
+19,19.0,33890.0,08-05-2022,Product A,False
+20,41.0,71606.0,15-05-2022,Product B,True
