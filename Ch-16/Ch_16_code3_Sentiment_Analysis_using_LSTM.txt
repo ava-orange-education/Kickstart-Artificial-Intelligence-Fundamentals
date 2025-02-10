@@ -1,0 +1,71 @@
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.models import Sequential
+from keras.layers import LSTM, Dense, Dropout, Embedding
+from sklearn.model_selection import train_test_split
+
+# Load the dataset
+df = pd.read_csv('/filepath/Tweets.csv', sep=',')
+# Extract relevant columns
+tweet_df = df[['text', 'airline_sentiment']]
+
+# Remove neutral sentiments
+tweet_df = tweet_df[tweet_df['airline_sentiment'] != 'neutral']
+tweet_df = tweet_df.reset_index(drop=True)
+
+# Convert 'airline_sentiment' to numeric labels
+sentiment_label = tweet_df.airline_sentiment.factorize()
+Y_encoded = to_categorical(sentiment_label[0])  # One-hot encode the labels
+
+# Extract tweet texts
+tweet = tweet_df.text.values
+
+# Tokenize the text
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(tweet)
+encoded_docs = tokenizer.texts_to_sequences(tweet)
+
+# Pad sequences to ensure consistent input length
+padded_sequence = pad_sequences(encoded_docs, maxlen=30)
+vocab_size = len(tokenizer.word_index) + 1  # Include 0 index for padding
+
+# Print a sample tweet and its corresponding encoded version
+print("Sample Tweet:", tweet[100])
+print("Encoded Version:", encoded_docs[100])
+
+# Split the dataset into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(
+    padded_sequence, Y_encoded, test_size=0.3, random_state=0
+)
+
+# Build the model
+embedding_vector_length = 128  # Dimension of word embeddings
+model = Sequential()
+model.add(Embedding(vocab_size, embedding_vector_length, input_length=30))  # Embedding layer
+model.add(LSTM(256))  # LSTM layer
+model.add(Dense(2, activation='sigmoid'))  # Output layer with sigmoid activation
+
+# Compile the model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Train the model
+model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=20, batch_size=32)
+
+# Test the model with example tweets
+# Example 1: Positive sentiment
+test_tweet1 = "On time arrival, and great baggage handling"
+tw = tokenizer.texts_to_sequences([test_tweet1])  # Tokenize
+tw = pad_sequences(tw, maxlen=30)  # Pad sequence
+prediction = np.argmax(model.predict(tw))  # Get predicted class
+print("Sentiment for Test Tweet 1:", sentiment_label[1][prediction])  # Map prediction to sentiment label
+
+# Example 2: Negative sentiment
+test_tweet2 = "Delayed on-boarding, need to wait for 30 min to receive the baggage"
+tw = tokenizer.texts_to_sequences([test_tweet2])  # Tokenize
+tw = pad_sequences(tw, maxlen=30)  # Pad sequence
+prediction = np.argmax(model.predict(tw))  # Get predicted class
+print("Sentiment for Test Tweet 2:", sentiment_label[1][prediction])  # Map prediction to sentiment label
